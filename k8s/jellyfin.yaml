@@ -1,0 +1,41 @@
+# Lab-only example. Verify image release, storage class, access controls and media mounts.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin
+  namespace: homelab
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: jellyfin}
+  template:
+    metadata:
+      labels: {app: jellyfin}
+    spec:
+      containers:
+        - name: jellyfin
+          image: jellyfin/jellyfin:10.10.7
+          ports:
+            - {name: http, containerPort: 8096}
+          volumeMounts:
+            - {name: config, mountPath: /config}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: "2", memory: 2Gi}
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyfin-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin
+  namespace: homelab
+spec:
+  selector: {app: jellyfin}
+  ports:
+    - {name: http, port: 8096, targetPort: http}
+  type: ClusterIP
