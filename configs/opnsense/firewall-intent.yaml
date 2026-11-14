@@ -1,0 +1,20 @@
+# Human-readable policy intent, NOT importable OPNsense configuration.
+schema_version: 1
+zones:
+  management: 10.10.10.0/24
+  servers: 10.10.20.0/24
+  kubernetes: 10.10.30.0/24
+  storage: 10.10.40.0/24
+  media: 10.10.50.0/24
+  guest: 10.10.60.0/24
+default_interzone_action: deny
+rules:
+  - {source: admin-vpn, destination: management, protocol: tcp, ports: [22, 443, 8006], action: allow}
+  - {source: kubernetes, destination: storage, protocol: tcp, ports: [2049], action: allow}
+  - {source: media-clients, destination: media, protocol: tcp, ports: [8096], action: allow}
+  - {source: guest, destination: management, protocol: any, action: deny}
+  - {source: guest, destination: storage, protocol: any, action: deny}
+notes:
+  - Validate interface assignment, aliases and ordering in OPNsense.
+  - Allow only documented DNS, NTP and monitoring dependencies.
+  - Preserve a tested management recovery path.
