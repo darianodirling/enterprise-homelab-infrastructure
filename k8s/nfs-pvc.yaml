@@ -1,0 +1,12 @@
+# Requires an installed and validated NFS CSI driver/provisioner with a matching StorageClass.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config
+  namespace: homelab
+spec:
+  accessModes: [ReadWriteMany]
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 5Gi
