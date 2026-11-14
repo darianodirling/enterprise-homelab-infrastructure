@@ -1,0 +1,18 @@
+#cloud-config
+# Example only; change identity and SSH key before provisioning.
+hostname: lab-vm
+users:
+  - name: labadmin
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 REPLACE_WITH_REAL_PUBLIC_KEY
+package_update: true
+packages:
+  - qemu-guest-agent
+  - curl
+  - ca-certificates
+runcmd:
+  - systemctl enable --now qemu-guest-agent
